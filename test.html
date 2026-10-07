@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Find Doctor</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+<body>
+
+<section class="first-sec">
+   <form class="search-bar" method="get" action="">
+      <i class="fas fa-search" style="padding:11px 0;color:#64748b;"></i>
+      <input type="search" name="q" placeholder="Dr name, Clinic name, area, city, state, pin......"
+             value="<?= htmlspecialchars($q) ?>">
+      <button type="submit" id="search-btn">Search</button>
+   </form>
+</section>
+
+<section class="second-sec">
+<?php if($result->num_rows==0): ?>
+     <p style="text-align:center;width:100%;">No doctor / clinic found.</p>
+<?php else:
+      while($d = $result->fetch_assoc()): 
+          $img = $d['profile_img'] ? "../upload/doctor/".$d['profile_img'] : "../img/doc-img2.png";
+          $stars = str_repeat('★',round($d['rating'])) . str_repeat('☆',5-round($d['rating']));
+?>
+  <div class="doc-card">
+     <div class="doc-card-top">
+        <img src="<?= $img ?>" alt="Doctor">
+        <div class="doc-profile">
+            <h3>Dr. <?= htmlspecialchars($d['doctor_name']) ?></h3>
+            <p id="specialization"><?= htmlspecialchars($d['specialization']) ?></p>
+            <div class="rating"><?= $stars ?> <span id="ratings"><?= $d['rating'] ?></span></div>
+        </div>
+        <span id="status"><strong>Active</strong></span>
+     </div>
+
+     <div class="doc-card-middle">
+        <div><i class="fas fa-briefcase-medical"></i><p><?= $d['experience'] ?> yrs exp</p></div>
+        <div><i class="fas fa-hospital"></i><p><?= htmlspecialchars($d['clinic_name']) ?></p></div>
+        <div><i class="fa-solid fa-indian-rupee-sign"></i><p><?= $d['fees'] ?></p></div>
+        <div><i class="fas fa-clock"></i><p>Days: <?= $d['days_available'] ?></p></div>
+        <div><i class="fas fa-clock"></i><p><?= substr($d['opening_time'],0,5) ?> - <?= substr($d['closing_time'],0,5) ?></p></div>
+        <div><i class="fa-solid fa-truck-medical"></i><p>Emergency: <?= ucfirst($d['emergency']) ?></p></div>
+     </div>
+
+     <div class="doc-card-bottom">
+        <a href="book.php?cid=<?= $d['clinic_id'] ?>" class="book">Book Appointment</a>
+        <a href="doctor-profile.php?id=<?= $d['doctor_id'] ?>" class="view">View Profile</a>
+     </div>
+  </div>
+<?php endwhile; endif; ?>
+</section>
+
+</body>
+</html>
+/* .question-box {
+   background-color: #fdfdfd;
+   padding: 20px;
+   border-radius: 12px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   width: 30%;
+}
+
+.question-box h2,
+.ans-box h2 {
+   font-size: 20px;
+   margin-bottom: 20px;
+}
+
+.form-group {
+   margin-bottom: 15px;
+}
+
+.form-group label {
+   display: block;
+   font-weight: bold;
+   font-size: 14px;
+   margin-bottom: 6px;
+   color: #333;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+   width: 100%;
+   padding: 10px 12px;
+   font-size: 15px;
+   border: 1px solid #ccc;
+   border-radius: 6px;
+   box-sizing: border-box;
+   outline: none;
+}
+
+.form-group textarea {
+   height: 120px;
+   resize: both;
+}
+
+.submit-btn {
+   background-color: #1B9AF5;
+   color: #fff;
+   border: none;
+   padding: 12px 20px;
+   border-radius: 6px;
+   font-size: 16px;
+   cursor: pointer;
+   width: 100%;
+   transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+   background-color: #0c6cb1;
+}
+
+.ans-box {
+   background-color: #fdfdfd;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   border-radius: 12px;
+   padding: 20px;
+   width: 65%;
+   overflow-y: auto;
+   max-height: 600px;
+} */
+
+/* @media (max-width: 768px) {
+   .main-content {
+       padding: 120px 20px 40px 20px;
+   }
+} */
+
+<!-- <script>
+        function submitQuestion(event) {
+            event.preventDefault();
+            const title = document.getElementById("title").value;
+            const category = document.getElementById("category").value;
+            const description = document.getElementById("description").value;
+
+            // You can send data to server here using AJAX or fetch
+            alert("Your question has been submitted!\n\nTitle: " + title + "\nCategory: " + category + "\nDescription: " + description);
+
+            // Reset form
+            document.getElementById("questionForm").reset();
+        }
+    </script> -->
+    <!-- <div class="question-box">
+                <h2>Ask Your Health Question</h2>
+                <form id="questionForm" onsubmit="submitQuestion(event)">
+                    <div class="form-group">
+                        <label for="title">Question Title</label>
+                        <input type="text" id="title" placeholder="Enter your question" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option>General Health</option>
+                            <option>Nutrition</option>
+                            <option>Mental Health</option>
+                            <option>Fitness</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Provide more details about your question"
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Question</button>
+                </form>
+            </div> -->

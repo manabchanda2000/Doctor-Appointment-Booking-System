@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      padding: 20px;
+      background-color: aliceblue;
+      animation: fadeSlide 0.5s ease-out;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateX(-100%);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0%);
+      }
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0px 0px 10px #1800b1;
+      width: 90%;
+    }
+
+    .left {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .left img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0, 5px, 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .right {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      border-left: 2px solid rgba(216, 216, 216, 0.601);
+    }
+
+    h2 {
+      text-align: left;
+      width: 100%;
+      max-width: 500px;
+      font-size: 25px;
+      margin-bottom: 25px;
+    }
+
+    .user-type {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+
+    .user-btn {
+      width: 32%;
+      padding: 10px 12px;
+      margin: 0 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      text-decoration: none;
+      text-align: center;
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+    }
+
+    .user-btn:hover {
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    form {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    input {
+      padding: 10px 0;
+      margin: 8px 0;
+      border: none;
+      border-bottom: 1px solid rgb(190, 185, 185);
+      font-size: 14px;
+      color: gray;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-bottom: 1px solid #10217d;
+    }
+
+    .signup-btn {
+      padding: 12px;
+      background: #10217d;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 25px;
+      margin-bottom: 10px;
+      transition: 0.3s;
+      box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .signup-btn:hover {
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-link {
+      font-size: 12px;
+      color: gray;
+    }
+
+    .login-link a {
+      color: #10217d;
+      text-decoration: none;
+      font-weight: bolder;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column-reverse;
+      }
+
+      .left,
+      .right {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Left Side Image -->
+    <div class="left">
+      <img src="../img/admin.jpg" alt="Admin Login Image" />
+    </div>
+
+    <!-- Right Side Form -->
+    <div class="right">
+      <h2>Login as an <span style="font-size: 26px; font-weight: bolder; color: #0040ff;">Admin</span></h2>
+
+      <!-- User Type Navigation -->
+      <!-- <div class="user-type">
+        <a href="../patient/patient-login.html" class="user-btn" style="background-color: #16c2d5;">Patient</a>
+        <a href="../doctor/doctor-login.html" class="user-btn" style="background-color: #89dee2;">Doctor</a>
+        <a href="admin-login.html" class="user-btn" style="background-color: #10217d;">Admin</a>
+      </div> -->
+
+      <!-- Login Form -->
+      <form action="admin-login-submit.php" method="POST">
+        <input type="email" name="email" placeholder="Admin Email" required />
+        <input type="password" name="password" id="password" placeholder="Password" required />
+        <p class="login-link"><a href="#">Forget Password</a></p>
+
+        <input type="hidden" id="device_info" name="device_info" />
+
+        <button type="submit" class="signup-btn">Login</button>
+        
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function getDeviceInfo() {
+      let userAgent = navigator.userAgent;
+      let platform = navigator.platform;
+      let browser = "Unknown Browser";
+
+      if (userAgent.includes("Edg")) browser = "Microsoft Edge";
+      else if (userAgent.includes("Firefox")) browser = "Mozilla Firefox";
+      else if (userAgent.includes("Chrome") && !userAgent.includes("Edg")) browser = "Google Chrome";
+      else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) browser = "Safari";
+      else if (userAgent.includes("Opera") || userAgent.includes("OPR")) browser = "Opera";
+      else if (userAgent.includes("MSIE") || userAgent.includes("Trident")) browser = "Internet Explorer";
+
+      return `${platform} - ${browser}`;
+    }
+
+    document.getElementById("device_info").value = getDeviceInfo();
+  </script>
+</body>
+
+</html>

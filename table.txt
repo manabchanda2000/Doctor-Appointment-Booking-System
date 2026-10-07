@@ -1,0 +1,299 @@
+1.admin table
+---------------------------
+CREATE TABLE admin (
+    admin_id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    address TEXT,
+    facebook_link VARCHAR(255),
+    youtube_link VARCHAR(255),
+    instagram_link VARCHAR(255),
+    linkedin_link VARCHAR(255),
+    name VARCHAR(255) NOT NULL,
+    logo VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+2.doctor table
+--------------------------------
+CREATE TABLE doctor (
+    doctor_id     INT AUTO_INCREMENT PRIMARY KEY,
+    UID           VARCHAR(20) UNIQUE NOT NULL,
+    name          VARCHAR(255) NOT NULL,
+    email         VARCHAR(255) UNIQUE NOT NULL,
+    phone         VARCHAR(15) NOT NULL,
+    password      VARCHAR(255) NOT NULL,
+    specialization VARCHAR(255) NOT NULL,
+    experience    INT NOT NULL,
+    qualification TEXT NOT NULL,
+    bio           TEXT,
+    profile_img   VARCHAR(255),
+    rating        DECIMAL(3,2) DEFAULT 0.00,
+    total_reviews INT DEFAULT 0,
+    availability  ENUM('active', 'inactive', 'blocked') DEFAULT 'active',
+    address       TEXT NOT NULL,
+    gender        ENUM('male', 'female', 'other') NOT NULL,
+    dob           DATE NOT NULL,
+    fees          DECIMAL(10,2) NOT NULL,
+    emergency     ENUM('yes', 'no'),
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+3.clinic table(add type and rating, ph, email, status)
+--------------------------------------------
+CREATE TABLE doctor_clinic (
+    clinic_id      INT AUTO_INCREMENT PRIMARY KEY,
+    doctor_id      INT NOT NULL,
+    clinic_name    VARCHAR(255) NOT NULL,
+    area           VARCHAR(255) NOT NULL,
+    city           VARCHAR(100) NOT NULL,
+    state          VARCHAR(100) NOT NULL,
+    pincode        VARCHAR(10) NOT NULL,
+    latitude       DECIMAL(10,8),
+    longitude      DECIMAL(11,8),
+    location_link  VARCHAR(500),
+    clinic_img     VARCHAR(255),
+    days_available VARCHAR(64),
+    opening_time   TIME NOT NULL,
+    closing_time   TIME NOT NULL,
+    fees           DECIMAL(10,2) NOT NULL,
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);
+
+4.patient table
+----------------------------------
+CREATE TABLE patient (
+    patient_id    INT AUTO_INCREMENT PRIMARY KEY,
+    name          VARCHAR(100) NOT NULL,
+    email         VARCHAR(255) UNIQUE NOT NULL,
+    phone         VARCHAR(15) UNIQUE NOT NULL,
+    password      VARCHAR(255) NOT NULL,
+    gender        ENUM('male', 'female', 'Other'),
+    dob           DATE NOT NULL,
+    blood_group   VARCHAR(10),
+    area          TEXT,
+    city          VARCHAR(100),
+    state         VARCHAR(100),
+    pincode       VARCHAR(10),
+    profile_img   VARCHAR(255),
+    emergency_contact
+    availability  ENUM('active', 'inactive', 'blocked') DEFAULT 'active',
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+5.log-info table
+---------------------------------------
+CREATE TABLE log_info (
+    log_id       INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id     INT NULL,
+    doctor_id    INT NULL,
+    patient_id   INT NULL,
+    log_type     ENUM('patient', 'doctor', 'admin') NOT NULL,
+    login_time   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    logout_time  TIMESTAMP NULL,
+    ip_address   VARCHAR(45),
+    device_info  VARCHAR(255),
+    location     VARCHAR(255),
+    status       ENUM('Success', 'Failed') NOT NULL,
+    FOREIGN KEY (admin_id) REFERENCES admin(admin_id) ON DELETE SET NULL,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE SET NULL,
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE SET NULL
+);
+
+6.query table
+-----------------------------
+CREATE TABLE query (
+    query_id     INT AUTO_INCREMENT PRIMARY KEY,
+    name         VARCHAR(255) NOT NULL,
+    email        VARCHAR(255) NOT NULL,
+    phone        VARCHAR(20),
+    message      TEXT NOT NULL,
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+7.announcement table
+-----------------------------------
+CREATE TABLE announcement (
+    announcement_id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id        INT NULL,
+    doctor_id       INT NULL,
+    title           VARCHAR(255) NOT NULL,
+    description     TEXT NOT NULL,
+    category        VARCHAR(100) NOT NULL,
+    image           VARCHAR(255),
+    file	    VARCHAR(255),
+    posted_by       ENUM('doctor', 'admin'),
+    posted_for      ENUM('Patient', 'doctor', 'all') NOT NULL,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (admin_id) REFERENCES admin(admin_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);
+
+8.healty-tips table
+------------------------------------
+CREATE TABLE health_tips (
+    tip_id       INT AUTO_INCREMENT PRIMARY KEY,
+    doctor_id    INT NOT NULL,
+    title        VARCHAR(255) NOT NULL,
+    description  TEXT NOT NULL,
+    category     VARCHAR(100) NOT NULL, 
+    image        VARCHAR(255),
+    likes        INT DEFAULT 0, 
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);
+
+9.our-team table
+------------------------------------
+CREATE TABLE our_team (
+    team_id      INT AUTO_INCREMENT PRIMARY KEY,
+    name         VARCHAR(255) NOT NULL,
+    email        VARCHAR(255) UNIQUE NOT NULL,
+    phone        VARCHAR(20) UNIQUE NOT NULL,
+    role         VARCHAR(100) NOT NULL,
+    bio          TEXT,
+    profile_img  VARCHAR(255),
+    facebook     VARCHAR(255),
+    instagram    VARCHAR(255),
+    linkedin     VARCHAR(255),
+    github       VARCHAR(255),
+    portfolio    VARCHAR(255),
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+10.doctor-request table
+-------------------------------------------
+CREATE TABLE doctor_request (
+    request_id   INT AUTO_INCREMENT PRIMARY KEY,
+    name         VARCHAR(255) NOT NULL,
+    email        VARCHAR(255) UNIQUE NOT NULL,
+    phone        VARCHAR(20)  NOT NULL,
+    UID          VARCHAR(50) UNIQUE NOT NULL,
+    gender
+    status       ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    approved_at  TIMESTAMP NULL
+);
+
+11.transaction table
+-------------------------------------------
+CREATE TABLE transaction (
+    transaction_id   INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id   INT NOT NULL,
+    patient_id       INT NOT NULL,
+    doctor_id        INT NOT NULL,
+    amount           DECIMAL(10,2) NOT NULL,
+    payment_mode     ENUM('Online', 'Offline') NOT NULL,
+    payment_status   ENUM('Pending', 'Paid', 'Failed') DEFAULT 'Pending',
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reference_id     VARCHAR(255) NULL,
+    remarks          TEXT NULL,
+    FOREIGN KEY (appointment_id) REFERENCES appointment(appointment_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);
+
+12.review table(add video review)
+----------------------------------------
+CREATE TABLE review (
+    review_id          INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id         INT NULL,
+    doctor_id          INT NULL,
+    review_for         ENUM('doctor', 'website') NOT NULL,
+    rating             INT CHECK (rating BETWEEN 1 AND 5),
+    review_text        TEXT,
+    review_date        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    likes_count        INT DEFAULT 0,
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);
+
+13.appointment table
+------------------------------------------
+CREATE TABLE appointment (
+    appointment_id      INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id          INT NOT NULL,
+    doctor_id           INT NOT NULL,
+    clinic_id           INT NOT NULL,
+    appointment_date    DATE NOT NULL,
+    appointment_time    TIME NOT NULL,
+    status              ENUM('Scheduled', 'Completed', 'Cancelled') DEFAULT 'Scheduled',
+    payment_status      ENUM('Pending', 'Paid', 'Refunded') DEFAULT 'Pending',
+    payment_mode        ENUM('Online', 'Offline') NOT NULL,
+    cancellation_reason TEXT,
+    doctor_confirmation ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    mode_of_appointment ENUM('Physical', 'Video Call') NOT NULL,
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE,
+    FOREIGN KEY (clinic_id) REFERENCES doctor_clinic(clinic_id) ON DELETE CASCADE
+);
+
+14.prescription table
+----------------------------------------------
+CREATE TABLE prescription (
+    prescription_id      INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id       INT NOT NULL,
+    patient_id           INT NOT NULL,
+    doctor_id            INT NOT NULL,
+    prescription         VARCHAR(255),
+    created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (appointment_id) REFERENCES appointment(appointment_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);
+
+15.emergency table(aragency level)
+-----------------------------------------------
+CREATE TABLE emergency_booking (
+    booking_id          INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id          INT NOT NULL,
+    doctor_id           INT NOT NULL,
+    emergency_type      VARCHAR(255) NOT NULL,
+    patient_location    VARCHAR(255) NOT NULL,
+    latitude           DECIMAL(10,8),
+    longitude          DECIMAL(11,8),
+    contact_person_name VARCHAR(255),
+    contact_person_number VARCHAR(15),
+    status             ENUM('Pending', 'Accepted', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    requested_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);
+
+16.question table(description)
+----------------------------------
+CREATE TABLE question (
+    question_id         INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id     INT NOT NULL,
+    specialty      VARCHAR(255) NOT NULL,
+    question       TEXT NOT NULL,
+    description
+    question_time  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status         ENUM('Pending', 'Answered') DEFAULT 'Pending',
+    FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE
+);
+
+17. answer table(add like button)
+-------------------------------------
+CREATE TABLE answer (
+    answer_id      INT AUTO_INCREMENT PRIMARY KEY,
+    question_id         INT NOT NULL,
+    doctor_id      INT NOT NULL,
+    answer         TEXT NOT NULL,
+    answer_time    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (question_id) REFERENCES question(question_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES doctor(doctor_id) ON DELETE CASCADE
+);

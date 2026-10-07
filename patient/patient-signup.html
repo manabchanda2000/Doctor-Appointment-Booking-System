@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Signup</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            padding: 20px;
+            background-color: aliceblue;
+
+        }
+
+        /* Full Page Layout */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0px 0px 10px #1800b1;
+
+        }
+
+        /* Left Side Image */
+        .left {
+            width: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .left img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0, 5px, 10px rgba(0, 0, 0, 0.2);
+
+        }
+
+        /* Right Side Form */
+        .right {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-left: 2px solid rgba(216, 216, 216, 0.601);
+        }
+
+        h2 {
+            text-align: left;
+            width: 100%;
+            max-width: 500px;
+            font-size: 25px;
+            margin-bottom: 25px;
+        }
+
+
+        /* Form Styling */
+        form {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Input Fields */
+        input {
+            padding: 12px 0;
+            margin: 8px 0;
+            border: none;
+            border-bottom: 1px solid rgb(190, 185, 185);
+            font-size: 14px;
+            color: gray;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-bottom: 1px solid #10217d;
+        }
+
+        /* Password Strength & Match Message */
+        #password-strength,
+        #password-match {
+            font-size: 12px;
+            margin: 12px 0;
+            color: gray;
+        }
+
+        /* Signup Button */
+        .signup-btn {
+            padding: 12px;
+            background: #10217d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 12px;
+            transition: 0.3s;
+            box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .signup-btn:hover {
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Already have an account */
+        .login-link {
+            margin-top: 15px;
+            font-size: 12px;
+            color: gray;
+        }
+
+        .login-link a {
+            color: #10217d;
+            text-decoration: none;
+            font-weight: bolder;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column-reverse;
+            }
+
+            .left {
+                width: 100%;
+            }
+
+            .right {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Left Side Image -->
+        <div class="left">
+            <img src="../img/signup-p.jpg" alt="Signup Image">
+        </div>
+
+        <!-- Right Side Form -->
+        <div class="right">
+            <h2>Create Account</h2>
+
+            <!-- Signup Form -->
+            <form action="patient-signup-submit.php" method="POST">
+                <input type="text" name="name" placeholder="Full Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" id="password" placeholder="Password" required>
+
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                <p id="password-strength">Password must have: 8+ characters, uppercase, number, special character</p>
+                <p id="password-match"></p> <!-- Password match message show korbe -->
+
+                <button type="submit" class="signup-btn">Create Account</button>
+
+                <p class="login-link">Already have an account? <a href="patient-login.html">Login</a></p>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        // Password Strength Checker
+        document.getElementById('password').addEventListener('input', function () {
+            let password = this.value;
+            let strengthText = document.getElementById('password-strength');
+
+            let hasUpperCase = /[A-Z]/.test(password);
+            let hasNumber = /\d/.test(password);
+            let hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            let isLongEnough = password.length >= 8;
+
+            if (hasUpperCase && hasNumber && hasSpecialChar && isLongEnough) {
+                strengthText.style.color = "green";
+            } else {
+                strengthText.style.color = "red";
+            }
+        });
+
+        // Password Match Checker
+        document.getElementById('confirm-password').addEventListener('input', function () {
+            let password = document.getElementById('password').value;
+            let confirmPassword = this.value;
+            let matchMessage = document.getElementById('password-match');
+
+            if (password === confirmPassword && confirmPassword !== "") {
+                matchMessage.textContent = "Passwords match!";
+                matchMessage.style.color = "green";
+            } else {
+                matchMessage.textContent = "Passwords do not match!";
+                matchMessage.style.color = "red";
+            }
+        });
+        // Form Submission Validation
+        function validateForm(event) {
+            let password = document.getElementById('password').value;
+            let confirmPassword = document.getElementById('confirm-password').value;
+            let strengthText = document.getElementById('password-strength');
+            let matchMessage = document.getElementById('password-match');
+
+            let hasUpperCase = /[A-Z]/.test(password);
+            let hasNumber = /\d/.test(password);
+            let hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            let isLongEnough = password.length >= 8;
+
+            if (!(hasUpperCase && hasNumber && hasSpecialChar && isLongEnough)) {
+                alert("❌ Password must be at least 8 characters long and include uppercase, number, and special character!");
+                event.preventDefault(); // Prevent form submission
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert("❌ Passwords do not match!");
+                event.preventDefault(); // Prevent form submission
+            }
+        }
+
+        document.querySelector("form").addEventListener("submit", validateForm);
+
+
+    </script>
+</body>
+
+</html>

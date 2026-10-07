@@ -1,0 +1,41 @@
+@keyframes fadein {
+    from {
+        opacity: 0;
+        transform: translateY(200px);
+        scale: .8;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        scale: 1;
+    }
+}
+
+@keyframes left-right {
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+        
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0px);
+        
+    }
+}
+
+@keyframes right-left {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+        
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0px);
+        
+    }
+}

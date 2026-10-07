@@ -1,0 +1,122 @@
+<?php
+session_start();
+include '../connection.php';
+
+$q = trim($_GET['q'] ?? ''); // Search input
+$specialization = trim($_GET['specialization'] ?? ''); // Specialization filter
+$rating = trim($_GET['rating'] ?? ''); // Rating filter
+$experience = trim($_GET['experience'] ?? ''); // Experience filter
+$days = isset($_GET['days']) ? $_GET['days'] : []; // Days filter
+$time_from = trim($_GET['time_from'] ?? ''); // Time range 'from'
+$time_to = trim($_GET['time_to'] ?? ''); // Time range 'to'
+
+// Build the WHERE clause dynamically based on filters
+$where = [];
+if ($q !== '') {
+    $like = "%$q%";
+    $where[] = "(d.name LIKE '$like' OR c.clinic_name LIKE '$like' OR c.area LIKE '$like' OR c.city LIKE '$like' OR c.state LIKE '$like' OR c.pincode LIKE '$like')";
+}
+if ($specialization !== '') {
+    $where[] = "d.specialization = '$specialization'";
+}
+if ($rating !== '') {
+    $where[] = "d.rating >= $rating";
+}
+if ($experience !== '') {
+    $where[] = "d.experience >= $experience";
+}
+if (!empty($days)) {
+    $day_conditions = [];
+    foreach ($days as $day) {
+        $day_conditions[] = "c.days_available LIKE '%$day%'";
+    }
+    $where[] = '(' . implode(' OR ', $day_conditions) . ')';
+}
+if ($time_from !== '' && $time_to !== '') {
+    $where[] = "(c.opening_time <= '$time_from' AND c.closing_time >= '$time_to')";
+}
+
+$where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+$sql = "SELECT d.doctor_id, d.name AS doctor_name, d.specialization, d.experience, d.rating, d.total_reviews, d.profile_img, d.emergency, d.availability,
+               c.clinic_id, c.clinic_name, c.area, c.city, c.state, c.days_available, c.opening_time, c.closing_time, c.fees
+        FROM doctor_clinic c
+        JOIN doctor d ON d.doctor_id = c.doctor_id
+        $where_clause
+        ORDER BY c.clinic_id DESC";
+
+$res = $conn->query($sql);
+?>
+
+<!-- Search and Filter Section -->
+<section class="first-sec">
+    <form class="sf-part" method="GET">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="search" name="q" id="search-bar" placeholder="Dr name, Clinic name, area, city, state, pin......" value="<?= htmlspecialchars($q) ?>">
+            <button type="submit" id="search-btn">Search</button>
+        </div>
+        <div class="filter">
+            <div class="filter-group">
+                <label for="specialization">Specialization:</label>
+                <select name="specialization">
+                    <option value="">All Specialties</option>
+                    <option value="Cardiology" <?= $specialization === 'Cardiology' ? 'selected' : '' ?>>Cardiology</option>
+                    <option value="Dermatology" <?= $specialization === 'Dermatology' ? 'selected' : '' ?>>Dermatology</option>
+                    <option value="Neurology" <?= $specialization === 'Neurology' ? 'selected' : '' ?>>Neurology</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Available Days:</label>
+                <?php
+                $days_of_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                foreach ($days_of_week as $day) {
+                    $checked = in_array($day, $days) ? 'checked' : '';
+                    echo "<label>$day</label> <input type='checkbox' name='days[]' value='$day' $checked>";
+                }
+                ?>
+            </div>
+            <div class="filter-group">
+                <label for="time_from">From:</label>
+                <input type="time" name="time_from" value="<?= htmlspecialchars($time_from) ?>">
+                <label for="time_to">To:</label>
+                <input type="time" name="time_to" value="<?= htmlspecialchars($time_to) ?>">
+            </div>
+            <div class="filter-group">
+                <label for="rating">Rating:</label>
+                <select name="rating">
+                    <option value="">All Ratings</option>
+                    <option value="4" <?= $rating === '4' ? 'selected' : '' ?>>4+ Stars</option>
+                    <option value="3" <?= $rating === '3' ? 'selected' : '' ?>>3+ Stars</option>
+                    <option value="2" <?= $rating === '2' ? 'selected' : '' ?>>2+ Stars</option>
+                    <option value="1" <?= $rating === '1' ? 'selected' : '' ?>>1+ Stars</option>
+                    <option value="0" <?= $rating === '0' ? 'selected' : '' ?>>0+ Stars</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="experience">Experience:</label>
+                <select name="experience">
+                    <option value="">All Experience</option>
+                    <option value="0" <?= $experience === '0' ? 'selected' : '' ?>>Fresher</option>
+                    <option value="2" <?= $experience === '2' ? 'selected' : '' ?>>2+ years</option>
+                    <option value="5" <?= $experience === '5' ? 'selected' : '' ?>>5+ years</option>
+                    <option value="10" <?= $experience === '10' ? 'selected' : '' ?>>10+ years</option>
+                    <option value="15" <?= $experience === '15' ? 'selected' : '' ?>>15+ years</option>
+                </select>
+            </div>
+            <button type="submit" id="filter-btn">Apply Filter</button>
+        </div>
+    </form>
+</section>
+
+<!-- Results Section -->
+<section class="second-sec">
+    <?php if ($res->num_rows == 0): ?>
+        <p style="text-align:center;width:100%;">No doctor / clinic found.</p>
+    <?php else: while ($d = $res->fetch_assoc()): ?>
+        <!-- Existing result cards design -->
+        <div class="doc-card">
+            <!-- Doctor and clinic details go here -->
+        </div>
+    <?php endwhile; endif; ?>
+</section>
